@@ -1,0 +1,17 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjEsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIn0",
+    "payload": "eyJkb21haW4iOiJjZWxvcXVlc3RyZXdhcmQudmVyY2VsLmFwcCJ9",
+    "signature": "MHg..."
+  },
+  "frame": {
+    "version": "1",
+    "name": "CeloQuest Rewards",
+    "iconUrl": "https://celoquestreward.vercel.app/favicon.svg",
+    "homeUrl": "https://celoquestreward.vercel.app",
+    "imageUrl": "https://celoquestreward.vercel.app/og-image.png",
+    "buttonTitle": "Start Earning CELO",
+    "splashImageUrl": "https://celoquestreward.vercel.app/splash.png",
+    "splashBackgroundColor": "#10b981"
+  }
+}

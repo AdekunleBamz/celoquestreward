@@ -1,65 +1,84 @@
-import Image from "next/image";
+'use client'
+import { useRouter } from 'next/navigation'
+import { useAccount } from 'wagmi'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const router = useRouter()
+  const { isConnected } = useAccount()
+  const { open } = useWeb3Modal()
+
+  useEffect(() => {
+    if (isConnected) {
+      router.push('/dashboard')
+    }
+  }, [isConnected, router])
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600">
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-16">
+          <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center animate-bounce">
+            <Coins className="text-emerald-600" size={48} />
+          </div>
+          <h1 className="text-6xl font-bold text-white mb-4">
+            CeloQuest Rewards
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-2xl text-emerald-100 mb-8">
+            Complete tasks, earn points, claim CELO
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => open()}
+            className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Start Earning Now
+            <ArrowRight size={24} />
+          </button>
         </div>
-      </main>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-white">
+            <Zap className="mb-4" size={40} />
+            <h3 className="text-xl font-bold mb-2">Daily Check-ins</h3>
+            <p className="text-emerald-100">Earn points every day just for logging in</p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-white">
+            <Award className="mb-4" size={40} />
+            <h3 className="text-xl font-bold mb-2">Complete Tasks</h3>
+            <p className="text-emerald-100">Finish tasks to earn bonus points</p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-white">
+            <Users className="mb-4" size={40} />
+            <h3 className="text-xl font-bold mb-2">Refer Friends</h3>
+            <p className="text-emerald-100">Get 50 points for each referral</p>
+          </div>
+
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 text-white">
+            <Coins className="mb-4" size={40} />
+            <h3 className="text-xl font-bold mb-2">Claim CELO</h3>
+            <p className="text-emerald-100">Convert points to real CELO tokens</p>
+          </div>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-12 text-center text-white">
+          <h2 className="text-3xl font-bold mb-4">How It Works</h2>
+          <div className="max-w-3xl mx-auto space-y-4 text-lg text-emerald-100">
+            <p>1️⃣ Connect your Celo wallet and register with your Farcaster username</p>
+            <p>2️⃣ Complete daily check-ins and tasks to earn points</p>
+            <p>3️⃣ Build your streak for bonus rewards</p>
+            <p>4️⃣ Convert 100 points = 0.01 CELO and claim anytime</p>
+          </div>
+        </div>
+
+        <div className="text-center mt-12 text-white text-sm">
+          <p>Contract: 0x15426cEBD33098d53942B6BeD648C07ae2a72A28</p>
+          <p className="mt-2">Built for Celo Proof of Ship 🚢</p>
+        </div>
+      </div>
     </div>
-  );
+  )
 }

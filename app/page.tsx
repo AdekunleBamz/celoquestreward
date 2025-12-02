@@ -86,7 +86,6 @@ export default function Home() {
                 Start Earning Now
                 <ArrowRight size={24} />
               </button>
-              </>
             ) : (
               <button
                 disabled

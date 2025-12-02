@@ -14,13 +14,16 @@ async function initializeWeb3Modal() {
   
   try {
     const { createWeb3Modal } = await import('@web3modal/wagmi/react')
-    createWeb3Modal({
+    const modal = createWeb3Modal({
       wagmiConfig: config,
       projectId,
       enableAnalytics: false,
       enableOnramp: false,
       themeMode: 'dark',
     })
+    
+    // Store modal instance globally for access
+    ;(window as any).__web3modal = modal
     web3ModalInitialized = true
   } catch (error) {
     console.warn('Web3Modal initialization error:', error)

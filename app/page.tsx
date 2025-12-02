@@ -8,14 +8,16 @@ export default function Home() {
   const router = useRouter()
   const { isConnected } = useAccount()
   const [mounted, setMounted] = useState(false)
-  const [openModal, setOpenModal] = useState<(() => void) | null>(null)
+  const [web3Modal, setWeb3Modal] = useState<any>(null)
 
   useEffect(() => {
     setMounted(true)
-    // Dynamically import and setup Web3Modal
+    // Get the Web3Modal instance after mount
     if (typeof window !== 'undefined') {
       import('@web3modal/wagmi/react').then(({ useWeb3Modal }) => {
-        // We can't use the hook directly here, so we'll use a different approach
+        // Store reference to modal
+        const modal = (window as any).__web3modal
+        setWeb3Modal(modal)
       })
     }
   }, [])
@@ -26,30 +28,44 @@ export default function Home() {
     }
   }, [isConnected, router])
 
-  const handleConnect = async () => {
-    if (typeof window !== 'undefined') {
-      try {
-        // Use the Web3Modal API directly
-        const w3mCore = (window as any).Web3Modal
-        if (w3mCore) {
-          w3mCore.open()
-        } else {
-          // Fallback: trigger the hidden button
-          const btn = document.querySelector('w3m-button')
-          if (btn) {
-            const shadowRoot = btn.shadowRoot
-            const button = shadowRoot?.querySelector('button')
-            button?.click()
-          }
-        }
-      } catch (error) {
-        console.error('Failed to open modal:', error)
+  const handleConnect = () => {
+    // Try multiple methods to open the modal
+    try {
+      // Method 1: Use window.__web3modal
+      if ((window as any).__web3modal) {
+        (window as any).__web3modal.open()
+        return
       }
+
+      // Method 2: Click the hidden button's shadow root
+      const w3mButton = document.querySelector('w3m-button')
+      if (w3mButton?.shadowRoot) {
+        const btn = w3mButton.shadowRoot.querySelector('button')
+        if (btn) {
+          btn.click()
+          return
+        }
+      }
+
+      // Method 3: Dispatch click event
+      if (w3mButton) {
+        w3mButton.dispatchEvent(new Event('click', { bubbles: true }))
+      }
+    } catch (error) {
+      console.error('Failed to open wallet modal:', error)
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600">
+      {/* Hidden w3m-button for functionality */}
+      {mounted && (
+        <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+          {/* @ts-ignore */}
+          <w3m-button />
+        </div>
+      )}
+      
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
           <div className="w-24 h-24 bg-white rounded-full mx-auto mb-6 flex items-center justify-center animate-bounce">
@@ -63,16 +79,13 @@ export default function Home() {
           </p>
           <div className="flex justify-center">
             {mounted ? (
-              <>
-                <button
-                  onClick={handleConnect}
-                  className="bg-white hover:bg-gray-100 active:scale-95 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all transform hover:scale-105 shadow-2xl cursor-pointer"
-                >
-                  Start Earning Now
-                  <ArrowRight size={24} />
-                </button>
-                {/* @ts-ignore - Hidden Web3Modal button */}
-                <w3m-button style={{ display: 'none' }} />
+              <button
+                onClick={handleConnect}
+                className="bg-white hover:bg-gray-100 active:scale-95 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all transform hover:scale-105 shadow-2xl cursor-pointer"
+              >
+                Start Earning Now
+                <ArrowRight size={24} />
+              </button>
               </>
             ) : (
               <button

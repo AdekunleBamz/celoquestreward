@@ -2,6 +2,8 @@
 const nextConfig = {
   // Use stable webpack instead of experimental Turbopack
   reactStrictMode: true,
+  // Add empty turbopack config to acknowledge we have webpack config
+  turbopack: {},
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -17,6 +19,18 @@ const nextConfig = {
         os: false,
       }
     }
+    
+    // Handle optional peer dependencies from @wagmi/connectors
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@base-org/account': false,
+      '@gemini-wallet/core': false,
+      '@metamask/sdk': false,
+      'porto': false,
+      '@safe-global/safe-apps-sdk': false,
+      '@safe-global/safe-apps-provider': false,
+    }
+    
     return config
   },
 }

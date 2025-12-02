@@ -1,38 +1,51 @@
-'use client'
+"use client"
 
-import React, { ReactNode } from 'react'
-import { config, projectId } from '@/app/config/wagmi'
-import { createWeb3Modal } from '@web3modal/wagmi/react'
+import React, { ReactNode, useState, useEffect, useRef } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WagmiProvider } from 'wagmi'
+import { WagmiProvider, State } from 'wagmi'
+import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { config, projectId } from '../config/wagmi'
 
-const queryClient = new QueryClient()
-
-if (!projectId) throw new Error('Project ID is not defined')
-
-createWeb3Modal({
-  wagmiConfig: config,
-  projectId,
-  enableAnalytics: true,
-  enableOnramp: true,
-  themeMode: 'light',
-  themeVariables: {
-    '--w3m-accent': '#10b981',
-    '--w3m-border-radius-master': '8px',
-  }
-})
-
-export default function ContextProvider({
+export function ContextProvider({
   children,
-  cookies
+  initialState
 }: {
   children: ReactNode
-  cookies: string | null
+  initialState?: State
 }) {
+  const [mounted, setMounted] = useState(false)
+  const initialized = useRef(false)
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 1,
+      },
+    },
+  }))
+
+  useEffect(() => {
+    if (!initialized.current) {
+      initialized.current = true
+      try {
+        createWeb3Modal({
+          wagmiConfig: config,
+          projectId,
+          enableAnalytics: false,
+          enableOnramp: false,
+          themeMode: 'dark',
+        })
+      } catch (error) {
+        console.warn('Web3Modal initialization error:', error)
+      }
+    }
+    setMounted(true)
+  }, [])
+
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={config} initialState={initialState}>
       <QueryClientProvider client={queryClient}>
-        {children}
+        {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
       </QueryClientProvider>
     </WagmiProvider>
   )

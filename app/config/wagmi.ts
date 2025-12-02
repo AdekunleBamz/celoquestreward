@@ -7,7 +7,7 @@ export const projectId = '8b50179539f8beea2f4a0c070d058d77'
 const metadata = {
   name: 'CeloQuest Rewards',
   description: 'Earn CELO by completing daily tasks',
-  url: typeof window !== 'undefined' ? window.location.origin : 'https://celoquestreward.vercel.app',
+  url: 'https://celoquestreward.vercel.app',
   icons: ['https://celoquestreward.vercel.app/favicon.svg']
 }
 

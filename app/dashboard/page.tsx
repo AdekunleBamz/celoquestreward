@@ -7,20 +7,10 @@ import Stats from '@/app/components/Stats'
 import TaskCard from '@/app/components/TaskCard'
 import { Calendar, Gift, Trophy } from 'lucide-react'
 import { formatAddress, formatPoints } from '@/app/utils/format'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function Dashboard() {
-  const router = useRouter()
   const { address, isConnected } = useAccount()
   const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
-
-  // Redirect to home if not connected
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/')
-    }
-  }, [isConnected, router])
 
   if (!isConnected) {
     return (
@@ -29,29 +19,32 @@ export default function Dashboard() {
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Connect Your Wallet</h2>
-            <p className="text-gray-600">Redirecting...</p>
+            <p className="text-gray-600">Please connect your Celo wallet to continue</p>
           </div>
         </div>
       </>
     )
   }
 
-  // Loading state while fetching user data
-  if (isConnected && userData === undefined) {
+  // Loading state
+  if (!userData) {
     return (
       <>
         <Header />
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-900">Loading your data...</h2>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-emerald-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your data...</p>
           </div>
         </div>
       </>
     )
   }
 
-  if (!userData || !userData[0]) {
+  // Check if user is registered
+  const [farcasterUsername, totalPoints, totalEarned, checkInStreak, referralCount, canCheckIn] = userData
+
+  if (!farcasterUsername || farcasterUsername === '') {
     return (
       <>
         <Header />
@@ -59,8 +52,6 @@ export default function Dashboard() {
       </>
     )
   }
-
-  const [farcasterUsername, totalPoints, totalEarned, checkInStreak, referralCount, canCheckIn] = userData
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
@@ -75,10 +66,10 @@ export default function Dashboard() {
         </div>
 
         <Stats
-          totalPoints={totalPoints}
-          totalEarned={totalEarned}
-          checkInStreak={checkInStreak}
-          referralCount={referralCount}
+          totalPoints={totalPoints || 0n}
+          totalEarned={totalEarned || 0n}
+          checkInStreak={checkInStreak || 0n}
+          referralCount={referralCount || 0n}
           totalUsers={totalUsers || 0n}
         />
 
@@ -110,27 +101,29 @@ export default function Dashboard() {
             </div>
             <button
               onClick={claimRewards}
-              disabled={Number(totalPoints) < 100 || isPending}
+              disabled={Number(totalPoints || 0n) < 100 || isPending}
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 disabled:scale-100"
             >
-              {Number(totalPoints) < 100 ? 'Need 100+ points' : isPending ? 'Claiming...' : 'Claim CELO'}
+              {Number(totalPoints || 0n) < 100 ? 'Need 100+ points' : isPending ? 'Claiming...' : 'Claim CELO'}
             </button>
           </div>
         </div>
 
-        <div className="mb-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <Trophy className="text-yellow-600" />
-            Available Tasks
-          </h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {allTaskIds?.map((taskId) => (
-              <TaskCard key={taskId.toString()} taskId={taskId} />
-            ))}
+        {allTaskIds && allTaskIds.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Trophy className="text-yellow-600" />
+              Available Tasks
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {allTaskIds.map((taskId) => (
+                <TaskCard key={taskId.toString()} taskId={taskId} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {leaderboard && leaderboard[0].length > 0 && (
+        {leaderboard && leaderboard[0] && leaderboard[0].length > 0 && (
           <div className="bg-white rounded-2xl p-8 shadow-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
               <Trophy className="text-yellow-600" />
@@ -143,7 +136,9 @@ export default function Dashboard() {
                     <span className="text-2xl font-bold text-gray-400">#{index + 1}</span>
                     <span className="font-mono text-sm">{formatAddress(addr)}</span>
                   </div>
-                  <span className="font-bold text-emerald-600">{formatPoints(Number(leaderboard[1][index]))} pts</span>
+                  <span className="font-bold text-emerald-600">
+                    {formatPoints(Number(leaderboard[1][index] || 0n))} pts
+                  </span>
                 </div>
               ))}
             </div>

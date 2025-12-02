@@ -20,7 +20,7 @@ export const config = defaultWagmiConfig({
     storage: cookieStorage
   }),
   enableWalletConnect: true,
-  enableInjected: true,
+  enableInjected: false, // Disable injected wallets (MetaMask) to prevent errors
   enableCoinbase: true,
-  enableEIP6963: true,
+  enableEIP6963: false, // Disable EIP6963 to prevent wallet detection issues
 })

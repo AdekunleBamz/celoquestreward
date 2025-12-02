@@ -13,24 +13,7 @@ import { useRouter } from 'next/navigation'
 export default function Dashboard() {
   const router = useRouter()
   const { address, isConnected } = useAccount()
-  
-  let hookData
-  try {
-    hookData = useContract()
-  } catch (error) {
-    console.error('Contract hook error:', error)
-    hookData = {
-      userData: undefined,
-      allTaskIds: undefined,
-      leaderboard: undefined,
-      dailyCheckIn: () => {},
-      claimRewards: () => {},
-      isPending: false,
-      totalUsers: 0n,
-    }
-  }
-  
-  const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = hookData
+  const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
 
   // Redirect to home if not connected
   useEffect(() => {

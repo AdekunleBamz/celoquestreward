@@ -19,6 +19,14 @@ export default function Home() {
     }
   }, [isConnected, router])
 
+  const handleConnect = () => {
+    const modal = document.querySelector('w3m-button')
+    if (modal) {
+      // @ts-ignore
+      modal.click()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600">
       <div className="container mx-auto px-4 py-12">
@@ -34,8 +42,17 @@ export default function Home() {
           </p>
           <div className="flex justify-center">
             {mounted ? (
-              /* @ts-ignore */
-              <w3m-button />
+              <>
+                <button
+                  onClick={handleConnect}
+                  className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all transform hover:scale-105 shadow-2xl"
+                >
+                  Start Earning Now
+                  <ArrowRight size={24} />
+                </button>
+                {/* @ts-ignore - Hidden Web3Modal button */}
+                <w3m-button style={{ display: 'none' }} />
+              </>
             ) : (
               <button
                 disabled

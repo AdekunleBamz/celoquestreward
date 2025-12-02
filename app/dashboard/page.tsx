@@ -26,6 +26,21 @@ export default function Dashboard() {
     )
   }
 
+  // Loading state while fetching user data
+  if (isConnected && userData === undefined) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-900">Loading your data...</h2>
+          </div>
+        </div>
+      </>
+    )
+  }
+
   if (!userData || !userData[0]) {
     return (
       <>

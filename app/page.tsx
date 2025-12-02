@@ -74,10 +74,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="text-center mt-12 text-white text-sm">
-          <p>Contract: 0x15426cEBD33098d53942B6BeD648C07ae2a72A28</p>
-          <p className="mt-2">Built for Celo Proof of Ship 🚢</p>
-        </div>
+        <div className="text-center mt-12 text-white text-sm"></div>
       </div>
     </div>
   )

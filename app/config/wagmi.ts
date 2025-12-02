@@ -21,5 +21,6 @@ export const config = defaultWagmiConfig({
   }),
   enableWalletConnect: true,
   enableInjected: true,
-  enableCoinbase: false,
+  enableCoinbase: true,
+  enableEIP6963: true,
 })

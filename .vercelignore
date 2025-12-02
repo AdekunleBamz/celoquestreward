@@ -1,0 +1,5 @@
+node_modules/thread-stream/test
+node_modules/thread-stream/bench.js
+node_modules/**/test
+node_modules/**/*.test.js
+node_modules/**/*.test.mjs

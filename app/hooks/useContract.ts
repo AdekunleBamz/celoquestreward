@@ -4,7 +4,7 @@ import { CONTRACT_ADDRESS, CONTRACT_ABI } from '@/app/config/contract'
 import { useState, useEffect } from 'react'
 
 export function useContract() {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const [lastTxHash, setLastTxHash] = useState<string | null>(null)
   const [justCheckedIn, setJustCheckedIn] = useState(false)
   
@@ -13,24 +13,36 @@ export function useContract() {
     abi: CONTRACT_ABI,
     functionName: 'getUser',
     args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && isConnected,
+    },
   })
 
   const { data: leaderboard, refetch: refetchLeaderboard } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getLeaderboard',
+    query: {
+      enabled: isConnected,
+    },
   })
 
   const { data: allTaskIds, refetch: refetchTasks } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getAllTasks',
+    query: {
+      enabled: isConnected,
+    },
   })
 
   const { data: totalUsers } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi: CONTRACT_ABI,
     functionName: 'getTotalUsers',
+    query: {
+      enabled: isConnected,
+    },
   })
 
   const { writeContract, data: hash, isPending } = useWriteContract()

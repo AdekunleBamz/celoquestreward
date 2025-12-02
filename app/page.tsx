@@ -32,7 +32,7 @@ export default function Home() {
     // Try multiple methods to open the modal
     try {
       // Method 1: Use window.__web3modal
-      if ((window as any).__web3modal) {
+      if (typeof window !== 'undefined' && (window as any).__web3modal) {
         (window as any).__web3modal.open()
         return
       }

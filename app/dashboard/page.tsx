@@ -7,10 +7,37 @@ import Stats from '@/app/components/Stats'
 import TaskCard from '@/app/components/TaskCard'
 import { Calendar, Gift, Trophy } from 'lucide-react'
 import { formatAddress, formatPoints } from '@/app/utils/format'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Dashboard() {
+  const router = useRouter()
   const { address, isConnected } = useAccount()
-  const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
+  
+  let hookData
+  try {
+    hookData = useContract()
+  } catch (error) {
+    console.error('Contract hook error:', error)
+    hookData = {
+      userData: undefined,
+      allTaskIds: undefined,
+      leaderboard: undefined,
+      dailyCheckIn: () => {},
+      claimRewards: () => {},
+      isPending: false,
+      totalUsers: 0n,
+    }
+  }
+  
+  const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = hookData
+
+  // Redirect to home if not connected
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/')
+    }
+  }, [isConnected, router])
 
   if (!isConnected) {
     return (
@@ -19,7 +46,7 @@ export default function Dashboard() {
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Connect Your Wallet</h2>
-            <p className="text-gray-600">Please connect your Celo wallet to continue</p>
+            <p className="text-gray-600">Redirecting...</p>
           </div>
         </div>
       </>

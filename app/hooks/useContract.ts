@@ -97,7 +97,7 @@ export function useContract() {
         refetchTasks()
       }, 2000)
     }
-  }, [isSuccess])
+  }, [isSuccess, refetchUser, refetchLeaderboard, refetchTasks])
 
   return {
     userData: userData as any,

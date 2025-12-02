@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react'
 
 export function useContract() {
   const { address } = useAccount()
+  const [lastTxHash, setLastTxHash] = useState<string | null>(null)
+  const [justCheckedIn, setJustCheckedIn] = useState(false)
   
   const { data: userData, refetch: refetchUser } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -44,6 +46,7 @@ export function useContract() {
   }
 
   const dailyCheckIn = () => {
+    setJustCheckedIn(true)
     writeContract({
       address: CONTRACT_ADDRESS,
       abi: CONTRACT_ABI,
@@ -69,6 +72,12 @@ export function useContract() {
   }
 
   useEffect(() => {
+    if (hash) {
+      setLastTxHash(hash)
+    }
+  }, [hash])
+
+  useEffect(() => {
     if (isSuccess) {
       setTimeout(() => {
         refetchUser()
@@ -90,6 +99,8 @@ export function useContract() {
     isPending,
     isConfirming,
     isSuccess,
+    lastTxHash,
+    justCheckedIn,
     refetch: () => {
       refetchUser()
       refetchLeaderboard()

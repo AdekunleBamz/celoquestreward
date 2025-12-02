@@ -8,6 +8,13 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'CeloQuest Rewards',
   description: 'Earn CELO by completing daily tasks',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/icon-192.png',
+  },
 }
 
 // Force dynamic rendering for all routes

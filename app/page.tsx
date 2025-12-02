@@ -8,9 +8,16 @@ export default function Home() {
   const router = useRouter()
   const { isConnected } = useAccount()
   const [mounted, setMounted] = useState(false)
+  const [openModal, setOpenModal] = useState<(() => void) | null>(null)
 
   useEffect(() => {
     setMounted(true)
+    // Dynamically import and setup Web3Modal
+    if (typeof window !== 'undefined') {
+      import('@web3modal/wagmi/react').then(({ useWeb3Modal }) => {
+        // We can't use the hook directly here, so we'll use a different approach
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -19,11 +26,25 @@ export default function Home() {
     }
   }, [isConnected, router])
 
-  const handleConnect = () => {
-    const modal = document.querySelector('w3m-button')
-    if (modal) {
-      // @ts-ignore
-      modal.click()
+  const handleConnect = async () => {
+    if (typeof window !== 'undefined') {
+      try {
+        // Use the Web3Modal API directly
+        const w3mCore = (window as any).Web3Modal
+        if (w3mCore) {
+          w3mCore.open()
+        } else {
+          // Fallback: trigger the hidden button
+          const btn = document.querySelector('w3m-button')
+          if (btn) {
+            const shadowRoot = btn.shadowRoot
+            const button = shadowRoot?.querySelector('button')
+            button?.click()
+          }
+        }
+      } catch (error) {
+        console.error('Failed to open modal:', error)
+      }
     }
   }
 
@@ -45,7 +66,7 @@ export default function Home() {
               <>
                 <button
                   onClick={handleConnect}
-                  className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all transform hover:scale-105 shadow-2xl"
+                  className="bg-white hover:bg-gray-100 active:scale-95 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 transition-all transform hover:scale-105 shadow-2xl cursor-pointer"
                 >
                   Start Earning Now
                   <ArrowRight size={24} />

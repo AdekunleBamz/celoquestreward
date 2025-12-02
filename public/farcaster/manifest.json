@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjY1MzQ3OSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDBjMDkwNjQzOUM2YTZiRDVmNzI0MDkyZjdCZWNlZDkyY2ZhNDI4QTEifQ",
+    "payload": "eyJkb21haW4iOiJjZWxvcXVlc3RyZXdhcmQudmVyY2VsLmFwcCJ9",
+    "signature": "/aVvmZbEsl9MPciHaf/2K2am5BspwCCg0VvgRxvnrypGcYFgqUw66s2c/Ss8L/PumjHDuHjO84VgmWdzQkq5nxs="
+  },
+  "frame": {
+    "version": "1",
+    "name": "Example Frame",
+    "iconUrl": "https://celoquestreward.vercel.app/icon.png",
+    "homeUrl": "https://celoquestreward.vercel.app",
+    "imageUrl": "https://celoquestreward.vercel.app/image.png",
+    "buttonTitle": "Check this out",
+    "splashImageUrl": "https://celoquestreward.vercel.app/splash.png",
+    "splashBackgroundColor": "#eeccff",
+    "webhookUrl": "https://celoquestreward.vercel.app/api/webhook"
+  }
+}

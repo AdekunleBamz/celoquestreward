@@ -33,6 +33,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="farcaster-frame-manifest" href="/farcaster/manifest.json" />
+      </head>
       <body className={inter.className}>
         <ContextProvider cookies={null}>
           {children}

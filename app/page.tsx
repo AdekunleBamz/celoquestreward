@@ -1,14 +1,17 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useAccount } from 'wagmi'
-import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Home() {
   const router = useRouter()
   const { isConnected } = useAccount()
-  const { open } = useWeb3Modal()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (isConnected) {
@@ -29,13 +32,20 @@ export default function Home() {
           <p className="text-2xl text-emerald-100 mb-8">
             Complete tasks, earn points, claim CELO
           </p>
-          <button
-            onClick={() => open()}
-            className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
-          >
-            Start Earning Now
-            <ArrowRight size={24} />
-          </button>
+          <div className="flex justify-center">
+            {mounted ? (
+              /* @ts-ignore */
+              <w3m-button />
+            ) : (
+              <button
+                disabled
+                className="bg-white/50 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto shadow-2xl"
+              >
+                Loading...
+                <ArrowRight size={24} />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">

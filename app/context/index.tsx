@@ -1,33 +1,20 @@
 "use client"
 
-import React, { ReactNode, useState, useEffect, useRef } from 'react'
+import React, { ReactNode, useState, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WagmiProvider, State } from 'wagmi'
-import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { WagmiProvider } from 'wagmi'
 import { config, projectId } from '../config/wagmi'
 
-export function ContextProvider({
-  children,
-  initialState
-}: {
-  children: ReactNode
-  initialState?: State
-}) {
-  const [mounted, setMounted] = useState(false)
-  const initialized = useRef(false)
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        retry: 1,
-      },
-    },
-  }))
+// Track Web3Modal initialization
+let web3ModalPromise: Promise<void> | null = null
 
-  useEffect(() => {
-    if (!initialized.current) {
-      initialized.current = true
+async function initializeWeb3Modal() {
+  if (typeof window === 'undefined') return
+  
+  if (!web3ModalPromise) {
+    web3ModalPromise = (async () => {
       try {
+        const { createWeb3Modal } = await import('@web3modal/wagmi/react')
         createWeb3Modal({
           wagmiConfig: config,
           projectId,
@@ -38,14 +25,42 @@ export function ContextProvider({
       } catch (error) {
         console.warn('Web3Modal initialization error:', error)
       }
-    }
-    setMounted(true)
+    })()
+  }
+  
+  return web3ModalPromise
+}
+
+// Create QueryClient outside component
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5000,
+    },
+  },
+})
+
+export function ContextProvider({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    initializeWeb3Modal().then(() => setReady(true))
   }, [])
 
   return (
-    <WagmiProvider config={config} initialState={initialState}>
+    <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
+        {ready ? children : (
+          <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 flex items-center justify-center">
+            <div className="text-white text-xl font-semibold">Loading...</div>
+          </div>
+        )}
       </QueryClientProvider>
     </WagmiProvider>
   )

@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use stable webpack instead of experimental Turbopack
   reactStrictMode: true,
-  // Add empty turbopack config to acknowledge we have webpack config
   turbopack: {},
+  
+  // Externalize packages that cause SSR issues
+  serverExternalPackages: ['pino', 'pino-pretty'],
+  
   webpack: (config, { isServer }) => {
+    // Client-side fallbacks for Node.js modules
     if (!isServer) {
       config.resolve.fallback = {
         fs: false,
@@ -29,6 +32,23 @@ const nextConfig = {
       'porto': false,
       '@safe-global/safe-apps-sdk': false,
       '@safe-global/safe-apps-provider': false,
+      'pino-pretty': false,
+      'lokijs': false,
+      'encoding': false,
+    }
+    
+    // Ignore pino-pretty warnings
+    config.ignoreWarnings = [
+      { module: /node_modules\/pino/ },
+    ]
+    
+    // Handle WalletConnect packages that use browser APIs
+    config.externals = config.externals || []
+    if (isServer) {
+      config.externals.push({
+        'utf-8-validate': 'commonjs utf-8-validate',
+        'bufferutil': 'commonjs bufferutil',
+      })
     }
     
     return config

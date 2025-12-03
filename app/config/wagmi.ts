@@ -1,26 +1,29 @@
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-import { cookieStorage, createStorage } from 'wagmi'
+import { createConfig, http } from 'wagmi'
 import { celo, celoAlfajores } from 'wagmi/chains'
+import { walletConnect, coinbaseWallet } from 'wagmi/connectors'
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector'
 
-export const projectId = '8b50179539f8beea2f4a0c070d058d77'
+const projectId = process.env.NEXT_PUBLIC_PROJECT_ID!
 
-const metadata = {
-  name: 'CeloQuest Rewards',
-  description: 'Earn CELO by completing daily tasks',
-  url: 'https://celoquestreward.vercel.app',
-  icons: ['https://celoquestreward.vercel.app/favicon.svg']
-}
+if (!projectId) throw new Error('Project ID is not defined')
 
-export const config = defaultWagmiConfig({
-  chains: [celo, celoAlfajores],
-  projectId,
-  metadata,
-  ssr: true,
-  storage: createStorage({
-    storage: cookieStorage
-  }),
-  enableWalletConnect: true,
-  enableInjected: true,
-  enableCoinbase: true,
-  enableEIP6963: true,
+export const config = createConfig({
+  chains: [celoAlfajores, celo],
+  transports: {
+    [celoAlfajores.id]: http(),
+    [celo.id]: http(),
+  },
+  connectors: [
+    // Farcaster Mini App connector (auto-connects in Farcaster)
+    farcasterMiniApp(),
+    // WalletConnect for multi-wallet support
+    walletConnect({ projectId }),
+    // Coinbase Wallet
+    coinbaseWallet({
+      appName: 'CeloQuest Rewards',
+      appLogoUrl: 'https://celoquestreward.vercel.app/icon.png',
+    }),
+  ],
 })
+
+export { projectId }

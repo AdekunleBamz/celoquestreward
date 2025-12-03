@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useAccount } from 'wagmi'
+import { useAccount, useConnect } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -10,22 +10,45 @@ export default function Home() {
   const router = useRouter()
   const { isConnected } = useAccount()
   const { open } = useWeb3Modal()
+  const { connect, connectors } = useConnect()
   const [isInFarcaster, setIsInFarcaster] = useState(false)
 
   useEffect(() => {
     sdk.actions.ready()
     
     // Check if in Farcaster
-    sdk.context.then(() => {
-      setIsInFarcaster(true)
-    }).catch(() => {
-      setIsInFarcaster(false)
-    })
+    const checkFarcaster = async () => {
+      try {
+        await sdk.context
+        setIsInFarcaster(true)
+        
+        // Auto-connect with Farcaster connector (first one)
+        if (!isConnected && connectors[0]) {
+          setTimeout(() => {
+            connect({ connector: connectors[0] })
+          }, 500)
+        }
+      } catch (e) {
+        setIsInFarcaster(false)
+      }
+    }
+    
+    checkFarcaster()
+  }, [])
 
+  useEffect(() => {
     if (isConnected) {
       router.push('/dashboard')
     }
   }, [isConnected, router])
+
+  const handleConnect = () => {
+    if (isInFarcaster && connectors[0]) {
+      connect({ connector: connectors[0] })
+    } else {
+      open()
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600">
@@ -40,13 +63,20 @@ export default function Home() {
           <p className="text-2xl text-emerald-100 mb-8">
             Complete tasks, earn points, claim CELO
           </p>
-          <button
-            onClick={() => open()}
-            className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
-          >
-            {isInFarcaster ? 'Connect Wallet' : 'Start Earning Now'}
-            <ArrowRight size={24} />
-          </button>
+          {!isConnected && (
+            <button
+              onClick={handleConnect}
+              className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
+            >
+              {isInFarcaster ? 'Connect Farcaster Wallet' : 'Start Earning Now'}
+              <ArrowRight size={24} />
+            </button>
+          )}
+          {isInFarcaster && !isConnected && (
+            <div className="text-white/80 text-sm mt-4">
+              Connecting to your wallet...
+            </div>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">

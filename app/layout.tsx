@@ -45,6 +45,27 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Call ready as soon as script loads
+              (function() {
+                if (typeof window !== 'undefined') {
+                  setTimeout(function() {
+                    import('@farcaster/frame-sdk').then(function(sdk) {
+                      sdk.default.actions.ready();
+                      console.log('SDK ready called early');
+                    }).catch(function() {
+                      console.log('Not in Farcaster');
+                    });
+                  }, 0);
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <FarcasterSDK />
         <ContextProvider cookies={null}>

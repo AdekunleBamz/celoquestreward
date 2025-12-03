@@ -1,24 +1,31 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useAccount } from 'wagmi'
-import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
 import { useEffect } from 'react'
 import sdk from '@farcaster/frame-sdk'
+import { useFarcasterWallet } from '@/app/hooks/useFarcasterWallet'
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 
 export default function Home() {
   const router = useRouter()
-  const { isConnected } = useAccount()
   const { open } = useWeb3Modal()
+  const { isInFarcaster, connectWallet, isConnected } = useFarcasterWallet()
 
   useEffect(() => {
-    // Call ready immediately
     sdk.actions.ready()
 
     if (isConnected) {
       router.push('/dashboard')
     }
   }, [isConnected, router])
+
+  const handleConnect = () => {
+    if (isInFarcaster) {
+      connectWallet()
+    } else {
+      open()
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600">
@@ -34,10 +41,10 @@ export default function Home() {
             Complete tasks, earn points, claim CELO
           </p>
           <button
-            onClick={() => open()}
+            onClick={handleConnect}
             className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
           >
-            Start Earning Now
+            {isInFarcaster ? 'Connect Farcaster Wallet' : 'Start Earning Now'}
             <ArrowRight size={24} />
           </button>
         </div>

@@ -7,6 +7,21 @@ const inter = Inter({ subsets: ['latin'] })
 
 const FRAME_URL = 'https://celoquestreward.vercel.app'
 
+const miniappEmbed = {
+  version: "1",
+  imageUrl: `${FRAME_URL}/api/frame-image`,
+  button: {
+    title: "Start Earning CELO",
+    action: {
+      type: "launch_frame",
+      name: "CeloQuest Rewards",
+      url: FRAME_URL,
+      splashImageUrl: `${FRAME_URL}/api/frame-image`,
+      splashBackgroundColor: "#10b981"
+    }
+  }
+}
+
 export const metadata: Metadata = {
   title: 'CeloQuest Rewards - Earn CELO Daily',
   description: 'Complete tasks, earn points, claim CELO rewards. Built on Celo blockchain.',
@@ -17,10 +32,9 @@ export const metadata: Metadata = {
     images: ['/api/frame-image'],
   },
   other: {
-    'fc:frame': 'vNext',
-    'fc:frame:image': `${FRAME_URL}/api/frame-image`,
-    'fc:frame:button:1': 'Start Earning',
-    'fc:frame:post_url': `${FRAME_URL}/api/frame`,
+    'fc:miniapp': JSON.stringify(miniappEmbed),
+    // For backward compatibility
+    'fc:frame': JSON.stringify(miniappEmbed),
   },
 }
 

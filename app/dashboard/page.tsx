@@ -15,7 +15,7 @@ export default function Dashboard() {
   const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
 
   useEffect(() => {
-    // Ensure SDK is ready
+    // Call ready immediately
     sdk.actions.ready()
   }, [])
 

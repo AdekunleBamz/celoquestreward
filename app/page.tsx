@@ -12,9 +12,9 @@ export default function Home() {
   const { open } = useWeb3Modal()
 
   useEffect(() => {
-    // Ensure SDK is ready
+    // Call ready immediately
     sdk.actions.ready()
-    
+
     if (isConnected) {
       router.push('/dashboard')
     }
@@ -76,11 +76,6 @@ export default function Home() {
             <p>3️⃣ Build your streak for bonus rewards</p>
             <p>4️⃣ Convert 100 points = 0.01 CELO and claim anytime</p>
           </div>
-        </div>
-
-        <div className="text-center mt-12 text-white text-sm">
-          <p>Contract: 0x15426cEBD33098d53942B6BeD648C07ae2a72A28</p>
-          <p className="mt-2">Built for Celo Proof of Ship 🚢</p>
         </div>
       </div>
     </div>

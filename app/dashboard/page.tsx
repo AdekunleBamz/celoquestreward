@@ -8,14 +8,13 @@ import TaskCard from '@/app/components/TaskCard'
 import { Calendar, Gift, Trophy } from 'lucide-react'
 import { formatAddress, formatPoints } from '@/app/utils/format'
 import { useEffect } from 'react'
-import sdk from '@farcaster/frame-sdk'
+import sdk from '@farcaster/miniapp-sdk'
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount()
   const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
 
   useEffect(() => {
-    // Call ready immediately
     sdk.actions.ready()
   }, [])
 

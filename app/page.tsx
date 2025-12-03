@@ -4,7 +4,7 @@ import { useAccount, useConnect } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import sdk from '@farcaster/frame-sdk'
+import sdk from '@farcaster/miniapp-sdk'
 
 export default function Home() {
   const router = useRouter()

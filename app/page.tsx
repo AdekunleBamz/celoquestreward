@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { Coins, Zap, Users, Award, ArrowRight } from 'lucide-react'
 import { useEffect } from 'react'
+import sdk from '@farcaster/frame-sdk'
 
 export default function Home() {
   const router = useRouter()
@@ -11,6 +12,9 @@ export default function Home() {
   const { open } = useWeb3Modal()
 
   useEffect(() => {
+    // Ensure SDK is ready
+    sdk.actions.ready()
+    
     if (isConnected) {
       router.push('/dashboard')
     }

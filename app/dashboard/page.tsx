@@ -7,10 +7,17 @@ import Stats from '@/app/components/Stats'
 import TaskCard from '@/app/components/TaskCard'
 import { Calendar, Gift, Trophy } from 'lucide-react'
 import { formatAddress, formatPoints } from '@/app/utils/format'
+import { useEffect } from 'react'
+import sdk from '@farcaster/frame-sdk'
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount()
   const { userData, allTaskIds, leaderboard, dailyCheckIn, claimRewards, isPending, totalUsers } = useContract()
+
+  useEffect(() => {
+    // Ensure SDK is ready
+    sdk.actions.ready()
+  }, [])
 
   if (!isConnected) {
     return (
@@ -26,7 +33,6 @@ export default function Dashboard() {
     )
   }
 
-  // Loading state
   if (!userData) {
     return (
       <>
@@ -41,7 +47,6 @@ export default function Dashboard() {
     )
   }
 
-  // Check if user is registered
   const [farcasterUsername, totalPoints, totalEarned, checkInStreak, referralCount, canCheckIn] = userData
 
   if (!farcasterUsername || farcasterUsername === '') {

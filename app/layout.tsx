@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import ContextProvider from '@/app/context'
+import FarcasterSDK from '@/app/components/FarcasterSDK'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,7 +34,6 @@ export const metadata: Metadata = {
   },
   other: {
     'fc:miniapp': JSON.stringify(miniappEmbed),
-    // For backward compatibility
     'fc:frame': JSON.stringify(miniappEmbed),
   },
 }
@@ -46,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <FarcasterSDK />
         <ContextProvider cookies={null}>
           {children}
         </ContextProvider>

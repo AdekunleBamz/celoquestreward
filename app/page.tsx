@@ -12,41 +12,48 @@ export default function Home() {
   const { open } = useWeb3Modal()
   const { connect, connectors } = useConnect()
   const [isInFarcaster, setIsInFarcaster] = useState(false)
+  const [isConnecting, setIsConnecting] = useState(false)
 
+  // Call ready() immediately
   useEffect(() => {
     sdk.actions.ready()
-    
-    // Check if in Farcaster
+  }, [])
+
+  // Just detect Farcaster context (don't connect)
+  useEffect(() => {
     const checkFarcaster = async () => {
       try {
         await sdk.context
         setIsInFarcaster(true)
-        
-        // Auto-connect with Farcaster connector (first one)
-        if (!isConnected && connectors[0]) {
-          setTimeout(() => {
-            connect({ connector: connectors[0] })
-          }, 500)
-        }
       } catch (e) {
         setIsInFarcaster(false)
       }
     }
-    
     checkFarcaster()
   }, [])
 
+  // Redirect to dashboard after connection
   useEffect(() => {
     if (isConnected) {
       router.push('/dashboard')
     }
   }, [isConnected, router])
 
-  const handleConnect = () => {
-    if (isInFarcaster && connectors[0]) {
-      connect({ connector: connectors[0] })
-    } else {
-      open()
+  // MANUAL connection only - user must click button
+  const handleConnect = async () => {
+    setIsConnecting(true)
+    try {
+      if (isInFarcaster && connectors[0]) {
+        // Farcaster wallet
+        await connect({ connector: connectors[0] })
+      } else {
+        // Web3Modal for browser
+        await open()
+      }
+    } catch (error) {
+      console.error('Connection error:', error)
+    } finally {
+      setIsConnecting(false)
     }
   }
 
@@ -63,20 +70,23 @@ export default function Home() {
           <p className="text-2xl text-emerald-100 mb-8">
             Complete tasks, earn points, claim CELO
           </p>
-          {!isConnected && (
-            <button
-              onClick={handleConnect}
-              className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl"
-            >
-              {isInFarcaster ? 'Connect Farcaster Wallet' : 'Start Earning Now'}
-              <ArrowRight size={24} />
-            </button>
-          )}
-          {isInFarcaster && !isConnected && (
-            <div className="text-white/80 text-sm mt-4">
-              Connecting to your wallet...
-            </div>
-          )}
+          <button
+            onClick={handleConnect}
+            disabled={isConnecting}
+            className="bg-white hover:bg-gray-100 text-emerald-600 px-12 py-5 rounded-2xl font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-105 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isConnecting ? (
+              <>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600"></div>
+                Connecting...
+              </>
+            ) : (
+              <>
+                {isInFarcaster ? 'Connect Farcaster Wallet' : 'Connect Wallet'}
+                <ArrowRight size={24} />
+              </>
+            )}
+          </button>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">

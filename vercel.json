@@ -3,7 +3,6 @@
     {
       "source": "/.well-known/farcaster.json",
       "destination": "https://api.farcaster.xyz/miniapps/hosted-manifest/019ae4a6-3149-2e91-10f7-e77647de1692",
-      "permanent": false,
       "statusCode": 307
     }
   ]
